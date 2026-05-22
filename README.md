@@ -239,7 +239,7 @@ Contributions are welcome! If you'd like to improve this portfolio:
 
 ### ⭐ If you like this portfolio, please give it a star!
 
-Made with ❤️ by a Cyber Security Enthusiast & Data Analytics Expert
+Portfolio created for Sethum Perera | Developed by an Artificial Intelligence Undergraduate
 
 [View Live Demo](https://sethum-s-portfolio.vercel.app/) 🚀
 
