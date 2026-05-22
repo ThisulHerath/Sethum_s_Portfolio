@@ -1,62 +1,52 @@
-function Projects() {
+const Projects = () => {
   const projects = [
     {
-      title: "Driving School Management System",
-      tech: "Java • Spring Boot • MySQL",
-      desc: "Web-based management system with booking, scheduling, CRUD operations and REST APIs."
+      title: "Multi-Client TCP Authentication Server",
+      tech: "C · Python · POSIX Sockets · Linux",
+      year: "2025",
+      desc: "Built a concurrent TCP authentication server handling simultaneous connections via fork(). Integrated salted password hashing (djb2 architecture), token-driven session expiration (300s), security lockout constraints after 3 failed tries, and rate-limiting enforcement (ERR 429)."
     },
     {
-      title: "Bus Scheduling & Booking System",
-      tech: "Spring Boot • JSP • MySQL",
-      desc: "Online reservation system with payments and schedule management."
+      title: "Student Depression Prediction System",
+      tech: "Machine Learning | Python · Scikit-learn · Pandas",
+      year: "2026",
+      desc: "Developed an end-to-end classification pipeline parsing real-world lifestyle metrics. Trained 6 separate configurations, achieving peak performance (F1 Score: 0.871, AUC: 0.916) leveraging Gradient Boosting paradigms."
     },
     {
-      title: "Student Depression Prediction",
-      tech: "Python • Machine Learning",
-      desc: "ML classification system with 0.916 AUC using Gradient Boosting."
+      title: "Driving School Registration & Scheduling System",
+      tech: "Java · Spring Boot · MySQL · JavaScript · HTML · CSS",
+      year: "2025",
+      desc: "Architected a full CRUD platform to cleanly orchestrate enrollment flows, user modules, and multi-tenant resource matching. Leveraged encapsulation and OOP mapping paradigms inside a robust Spring platform configuration."
     },
     {
-      title: "TCP Authentication Server",
-      tech: "C • Linux • POSIX Sockets",
-      desc: "Concurrent secure authentication server with rate limiting and token management."
+      title: "Web-Based Bus Scheduling & Booking System",
+      tech: "Java · Spring Boot · MySQL · JSP · Data Structures",
+      year: "2024",
+      desc: "Engineered high-concurrency seat reservation services complete with transaction simulation pipelines, dynamic route adjustments, and optimized collections parsing protocols."
     },
     {
-      title: "Trip Management System",
-      tech: "Java • Spring Boot • JPA",
-      desc: "Complete trip booking and management system with guide scheduling."
+      title: "Web-Based Trip Management System",
+      tech: "Java · Spring Boot · Spring Data JPA · MySQL · JSP",
+      year: "2024",
+      desc: "Designed full MVC architecture backend supporting resource scheduling, guide matching automation, profile authentication management, and structured transactional user feedback loops."
     }
   ];
 
   return (
-    <section id="projects" className="py-24 px-6">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl font-bold text-cyan-400 mb-10">
-          Projects
-        </h2>
-
-        <div className="grid md:grid-cols-2 gap-8">
-          {projects.map((project) => (
-            <div
-              key={project.title}
-              className="bg-[#0f172a] p-8 rounded-3xl border border-cyan-500/20 hover:border-cyan-400 transition"
-            >
-              <h3 className="text-2xl font-semibold mb-3">
-                {project.title}
-              </h3>
-
-              <p className="text-cyan-400 mb-4">
-                {project.tech}
-              </p>
-
-              <p className="text-gray-300 leading-7">
-                {project.desc}
-              </p>
-            </div>
-          ))}
-        </div>
+    <section id="projects" className="section">
+      <h2 className="section-title">&gt; cd ./projects</h2>
+      <div className="projects-grid">
+        {projects.map((proj, idx) => (
+          <div className="project-card" key={idx}>
+            <span className="project-year">[{proj.year}]</span>
+            <h3 className="project-title">{proj.title}</h3>
+            <div className="project-tech">{proj.tech}</div>
+            <p className="project-desc">{proj.desc}</p>
+          </div>
+        ))}
       </div>
     </section>
   );
-}
+};
 
 export default Projects;
