@@ -1,7 +1,14 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { ArrowUpRight, ShieldCheck, ChartNoAxesCombined, Code2, X } from 'lucide-react';
+const categories = ['Security', 'Data & ML', 'Engineering', 'Engineering', 'Engineering'];
+const projectIcons = [ShieldCheck, ChartNoAxesCombined, Code2, Code2, Code2];
 
 const Projects = () => {
   const [selectedProject, setSelectedProject] = useState(null);
+  const [filter, setFilter] = useState('All work');
+  const dialog = useRef(null);
+  const openProject = (project) => { setSelectedProject(project); dialog.current.showModal(); };
+  const closeProject = () => dialog.current.close();
 
   const projects = [
     {
@@ -46,51 +53,22 @@ const Projects = () => {
     }
   ];
 
-  return (
-    <section id="projects" className="section">
-      <h2 className="section-title">&gt; cd ./projects</h2>
-      <div className="projects-grid">
-        {projects.map((proj, idx) => (
-          <div className="project-card" key={idx}>
-            <div className="project-card-header">
-              <h3 className="project-title">{proj.title}</h3>
-              <span className="project-year">[{proj.year}]</span>
-            </div>
-            <div className="project-tech">{proj.tech}</div>
-            <p className="project-desc">{proj.desc}</p>
-            <button
-              type="button"
-              className="project-more-btn"
-              onClick={() => setSelectedProject(proj)}
-            >
-              View More
-            </button>
-          </div>
-        ))}
-      </div>
-
-      {selectedProject && (
-        <div className="project-modal-overlay" onClick={() => setSelectedProject(null)}>
-          <div className="project-modal" onClick={(event) => event.stopPropagation()}>
-            <div className="project-modal-header">
-              <div>
-                <span className="project-year">[{selectedProject.year}]</span>
-                <h3>{selectedProject.title}</h3>
-              </div>
-              <button type="button" className="project-modal-close" onClick={() => setSelectedProject(null)}>
-                Close
-              </button>
-            </div>
-            <p className="project-tech">{selectedProject.tech}</p>
-            <p className="project-desc expanded">{selectedProject.desc}</p>
-            {selectedProject.details && (
-              <p className="project-desc" style={{ marginTop: '12px' }}>{selectedProject.details}</p>
-            )}
-          </div>
-        </div>
-      )}
-    </section>
-  );
+  const visibleProjects = projects.map((project, index) => ({ ...project, category: categories[index], index })).filter(project => filter === 'All work' || project.category === filter);
+  return <section id="projects" className="section projects-section">
+    <div className="section-heading"><div><p className="eyebrow">03 / SELECTED WORK</p><h2>Learning by <span>building.</span></h2></div><span className="section-code">&lt;projects /&gt;</span></div>
+    <div className="projects-toolbar"><p>Ideas turned into working systems.</p><div className="project-filters" role="group" aria-label="Filter projects">{['All work', 'Security', 'Data & ML', 'Engineering'].map(category => <button key={category} aria-pressed={filter === category} className={filter === category ? 'selected' : ''} onClick={() => setFilter(category)}>{category}{category === 'All work' && <span>05</span>}</button>)}</div></div>
+    <div className="projects-grid">{visibleProjects.map(project => {
+      const Icon = projectIcons[project.index];
+      return <article className={`project-card ${project.index === 0 ? 'featured-project' : ''}`} key={project.title}>
+        <div className="project-card-top"><span className="project-icon"><Icon size={24} /></span><span className="project-category">{project.category}</span><span className="project-year">{project.year}</span></div>
+        <span className="project-index">PROJECT / 0{project.index + 1}</span><h3>{project.title}</h3><p className="project-desc">{project.desc}</p>
+        <div className="project-tags">{project.tech.split(/ · | \| /).map(tech => <span key={tech}>{tech}</span>)}</div>
+        <button className="project-more-btn" onClick={() => openProject(project)}>Explore project <ArrowUpRight size={18} /></button>
+      </article>;
+    })}</div>
+    <dialog ref={dialog} className="project-modal" aria-labelledby="project-dialog-title" onClick={event => { if (event.target === dialog.current) { const rect = dialog.current.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) closeProject(); } }}>
+      {selectedProject && <><div className="project-modal-header"><span className="eyebrow">{selectedProject.category} / {selectedProject.year}</span><button className="dialog-close" aria-label="Close project details" onClick={closeProject}><X size={22} /></button></div><h2 id="project-dialog-title">{selectedProject.title}</h2><p className="project-tech">{selectedProject.tech}</p><p>{selectedProject.desc}</p><p>{selectedProject.details}</p><button className="button button-secondary" onClick={closeProject}>Back to projects</button></>}
+    </dialog>
+  </section>;
 };
-
 export default Projects;

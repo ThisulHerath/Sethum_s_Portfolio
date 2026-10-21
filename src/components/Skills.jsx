@@ -1,4 +1,5 @@
-import React from 'react';
+import { ShieldCheck, Code2, ChartNoAxesCombined, Workflow } from 'lucide-react';
+const icons = [ShieldCheck, Code2, ChartNoAxesCombined, Workflow];
 
 const Skills = () => {
   const skillGroups = [
@@ -46,12 +47,14 @@ const Skills = () => {
 
   return (
     <section id="skills" className="section">
-      <h2 className="section-title">&gt; sys.get_skills()</h2>
+      <div className="section-heading"><div><p className="eyebrow">02 / MY TOOLKIT</p><h2>Equipped to <span>explore.</span></h2></div><p className="section-intro">A growing toolkit across security,<br />engineering, and data.</p></div>
       <div className="skills-board">
-        {skillGroups.map((group) => (
+        {skillGroups.map((group, index) => {
+          const Icon = icons[index];
+          return (
           <div key={group.title} className="skills-panel">
             <h3 className="skills-panel-title">
-              <span>{group.icon}</span> {group.title}
+              <span className="skill-icon"><Icon size={22} /></span><span>{group.title}</span><span className="panel-number">0{index + 1}</span>
             </h3>
             <div className="skills-panel-list">
               {group.items.map((skill) => (
@@ -67,7 +70,7 @@ const Skills = () => {
               ))}
             </div>
           </div>
-        ))}
+        ); })}
       </div>
     </section>
   );

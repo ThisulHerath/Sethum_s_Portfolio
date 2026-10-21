@@ -1,20 +1,8 @@
-import React from 'react';
-
-const About = () => {
-  return (
-    <section id="about" className="section">
-      <h2 className="section-title">&gt; whoami</h2>
-      <p style={{ lineHeight: '1.8', fontSize: '1rem', color: 'var(--text-main)' }}>
-        I am an undergraduate pursuing a unique parallel track combining technical rigor and analytics: 
-        specializing in <strong>Cyber Security</strong> at SLIIT alongside <strong>Industrial Statistics & Mathematical Finance</strong> at the University of Colombo. 
-        I have a strong interest in securing digital infrastructure, data analytics, and analytical problem-solving.
-        <br /><br />
-        Alongside tech, discipline drives my execution. I have represented Sri Lanka at multiple international badminton tournaments, 
-        serving as <strong>Team Captain</strong> at both the World Junior Championship (Spain) and Asian Junior Championship (Myanmar). 
-        As an Under 21 South Asian Games Silver Medalist, I apply the exact same tactical discipline, leadership under fire, and adaptive mindset built on the court straight into managing modern data frameworks and structural security issues.
-      </p>
-    </section>
-  );
-};
-
-export default About;
+import { GraduationCap, Trophy, ArrowUpRight } from 'lucide-react';
+export default function About() {
+  return <section id="about" className="section about-section">
+    <div className="section-heading"><div><p className="eyebrow">01 / THE PERSON BEHIND THE TERMINAL</p><h2>Curiosity meets <span>discipline.</span></h2></div><span className="section-code">&lt;about /&gt;</span></div>
+    <div className="about-layout"><div className="about-copy"><p>I’m an undergraduate pursuing two parallel paths: <strong>Cyber Security at SLIIT</strong> and <strong>Industrial Statistics & Mathematical Finance at the University of Colombo.</strong></p><p>My interests sit where these worlds meet: securing digital infrastructure, finding meaning in data, and solving complex problems with a clear, analytical approach.</p><p>Beyond the screen, I’ve represented Sri Lanka in international badminton. Captaining teams at the World Junior Championship in Spain and Asian Junior Championship in Myanmar taught me to adapt, lead, and stay composed under pressure.</p><div className="about-signoff"><span className="accent">↳</span> The same focus. A different kind of court.</div></div>
+    <div className="credential-list"><article className="credential"><GraduationCap /><div><span className="eyebrow">SLIIT</span><h3>BSc (Hons) Information Technology</h3><p>Specialising in Cyber Security</p></div><ArrowUpRight size={17} /></article><article className="credential"><GraduationCap /><div><span className="eyebrow">UNIVERSITY OF COLOMBO</span><h3>BSc (Hons) Industrial Statistics<br />& Mathematical Finance</h3><p>A parallel perspective in analytics</p></div><ArrowUpRight size={17} /></article><article className="credential achievement"><Trophy /><div><span className="eyebrow">BEYOND TECHNOLOGY</span><h3>International athlete. Team captain.</h3><p>Under 21 South Asian Games · Silver Medalist</p></div></article></div></div>
+  </section>;
+}
