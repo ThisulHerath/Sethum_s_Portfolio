@@ -1,110 +1,97 @@
-﻿import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-const MATRIX_CHARS = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*+-<>[]{}';
+const CHARACTERS = '01アイウエオカキクケコサシスセソタチツテト<>/{}';
+const randomCharacter = () => CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
 
-const MatrixBackground = () => {
+export default function MatrixBackground() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const context = canvas.getContext('2d', { alpha: true });
+    const context = canvas?.getContext('2d');
     if (!context) return;
 
-    let animationFrameId;
-    let lastFrameTime = 0;
-    let columns = [];
-    let charSize = 14;
-    let trailFade = 0.08;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let width = 0;
+    let height = 0;
+    let streams = [];
+    let frame = 0;
+    let lastTime = 0;
 
-    const randomChar = () => MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)];
-
-    const setup = () => {
-      const dpr = window.devicePixelRatio || 1;
-      const { innerWidth, innerHeight } = window;
-
-      canvas.width = Math.floor(innerWidth * dpr);
-      canvas.height = Math.floor(innerHeight * dpr);
-      canvas.style.width = `${innerWidth}px`;
-      canvas.style.height = `${innerHeight}px`;
-
-      context.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      charSize = innerWidth < 768 ? 12 : 14;
-      trailFade = innerWidth < 768 ? 0.12 : 0.08;
-
-      const totalColumns = Math.floor(innerWidth / charSize);
-      columns = Array.from({ length: totalColumns }, () => ({
-        y: Math.random() * -innerHeight,
-        speed: 0.75 + Math.random() * 1.45,
-      }));
-
-      context.fillStyle = '#020202';
-      context.fillRect(0, 0, innerWidth, innerHeight);
-      context.font = `${charSize}px 'Fira Code', monospace`;
+    const paint = () => {
+      context.clearRect(0, 0, width, height);
+      context.font = '12px "IBM Plex Mono", monospace';
+      streams.forEach(stream => {
+        stream.glyphs.forEach((glyph, index) => {
+          const y = stream.y - index * 19;
+          if (y < -20 || y > height + 20) return;
+          const opacity = (1 - index / stream.glyphs.length) * stream.brightness;
+          context.fillStyle = index === 0 ? `rgba(212,255,224,${opacity})` : `rgba(115,224,147,${opacity * 0.75})`;
+          context.shadowColor = '#79ffac';
+          context.shadowBlur = index < 2 ? 9 : 0;
+          context.fillText(glyph, stream.x, y);
+        });
+      });
+      context.shadowBlur = 0;
     };
 
-    const draw = (timestamp) => {
-      if (!lastFrameTime) {
-        lastFrameTime = timestamp;
+    const setup = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(width * ratio);
+      canvas.height = Math.round(height * ratio);
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      const spacing = width < 600 ? 32 : 35;
+      streams = Array.from({ length: Math.ceil(width / spacing) }, (_, index) => ({
+        x: index * spacing + 9,
+        y: Math.random() * (height + 500),
+        speed: 17 + Math.random() * 28,
+        brightness: 0.3 + Math.random() * 0.55,
+        glyphs: Array.from({ length: 9 + Math.floor(Math.random() * 18) }, randomCharacter),
+      }));
+      paint();
+    };
+
+    const animate = timestamp => {
+      const elapsed = timestamp - lastTime;
+      if (elapsed >= 50) {
+        const seconds = Math.min(elapsed / 1000, 0.1);
+        lastTime = timestamp;
+        streams.forEach(stream => {
+          stream.y += stream.speed * seconds;
+          if (stream.y - stream.glyphs.length * 19 > height) stream.y = -20;
+          if (Math.random() < 0.025) stream.glyphs[Math.floor(Math.random() * stream.glyphs.length)] = randomCharacter();
+        });
+        paint();
       }
+      frame = window.requestAnimationFrame(animate);
+    };
 
-      const delta = timestamp - lastFrameTime;
-      if (delta < 33) {
-        animationFrameId = window.requestAnimationFrame(draw);
-        return;
-      }
-      lastFrameTime = timestamp;
-
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-
-      context.fillStyle = `rgba(2, 2, 2, ${trailFade})`;
-      context.fillRect(0, 0, width, height);
-
-      context.font = `${charSize}px 'Fira Code', monospace`;
-
-      columns.forEach((column, index) => {
-        const x = index * charSize;
-        const char = randomChar();
-
-        context.fillStyle = Math.random() > 0.94 ? '#d8ffe8' : '#00ff41';
-        context.shadowBlur = 10;
-        context.shadowColor = '#00ff41';
-        context.fillText(char, x, column.y);
-
-        column.y += charSize * column.speed;
-
-        if (column.y > height + Math.random() * 120) {
-          column.y = -Math.random() * height * 0.8;
-          column.speed = 0.75 + Math.random() * 1.45;
-        }
-      });
-
-      context.shadowBlur = 0;
-      animationFrameId = window.requestAnimationFrame(draw);
+    const syncAnimation = () => {
+      window.cancelAnimationFrame(frame);
+      lastTime = 0;
+      if (!document.hidden && !reducedMotion.matches) frame = window.requestAnimationFrame(animate);
+      else paint();
     };
 
     setup();
-    animationFrameId = window.requestAnimationFrame(draw);
-
+    syncAnimation();
     window.addEventListener('resize', setup);
-
+    document.addEventListener('visibilitychange', syncAnimation);
+    reducedMotion.addEventListener('change', syncAnimation);
     return () => {
+      window.cancelAnimationFrame(frame);
       window.removeEventListener('resize', setup);
-      window.cancelAnimationFrame(animationFrameId);
+      document.removeEventListener('visibilitychange', syncAnimation);
+      reducedMotion.removeEventListener('change', syncAnimation);
     };
   }, []);
 
-  return (
-    <div className="matrix-bg" aria-hidden="true">
-      <canvas ref={canvasRef} className="matrix-canvas" />
-      <div className="matrix-vignette" />
-      <div className="matrix-grid-overlay" />
-    </div>
-  );
-};
-
-export default MatrixBackground;
-
+  return <div className="matrix-bg" aria-hidden="true">
+    <canvas ref={canvasRef} className="matrix-canvas" />
+    <div className="matrix-gloss" />
+    <div className="matrix-grid-overlay" />
+    <div className="matrix-vignette" />
+  </div>;
+}
